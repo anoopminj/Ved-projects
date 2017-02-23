@@ -10,8 +10,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 public class EmailAdapator {
 	private static String HOST = "smtp.gmail.com";
-	private static String USERNAME = "vedprakash.sahu143@gmail.com";
-	private static String PASSWORD = "Ved@26121993";
+	private static String USERNAME = "xxxxxx@gmail.com";
+	private static String PASSWORD = "xxxxxxxxx";
 	private static int PORT = 587;
 	private static String to = "pyadu8535@gmail.com";
 	private static String from = "vedprakash.sahu143@gmail.com";
