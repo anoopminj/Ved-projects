@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd">
+
+
+	 <jee:jndi-lookup id="connectionFactory" jndi-name="java:/ConnectionFactory" />
+    <jee:jndi-lookup id="ds2AdminBatchQueue" jndi-name="queue/ds2AdminBatchQueue" />
+     
+     <bean id="ds2AdminEventSender"  class="com.spring.jms.DSAdminEventSender">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="ds2AdminBatchQueue" ref="ds2AdminBatchQueue" />
+	</bean>		
+		
+	<bean id="ds2AdminServiceContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="concurrentConsumers" value="8"/>
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="ds2AdminBatchQueue" />
+		<property name="messageListener" ref="ds2AdminEventReceiver" />
+	</bean>
+	
+	<bean id="ds2AdminEventReceiver" class="com.spring.jms.DSAdminEventReceiver"/> 
+
+
+<!-- <import resource="classpath:ds2-jboss-jms-messageware.xml"/>
+OL.ADMINBATCHQUEUE.DS.HOLD 
+    <bean id="ds2AdminBatchQueue" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true" >
+        <property name="jndiTemplate" ref="remoteBrokerJndiTemplateQmgr1" />
+        <property name="jndiName" value="ds2AdminBatchQueue"/>
+    </bean>      
+	
+  	<bean id="ds2AdminEventSender" class="com.spring.jms.DSAdminEventSender">
+        <property name="connectionFactory" ref="remoteBrokerConnectionFactoryQmgr1" />
+        <property name="ds2AdminBatchQueue" ref="ds2AdminBatchQueue" />
+	</bean>		
+		
+	<bean id="ds2AdminServiceContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="remoteBrokerConnectionFactoryQmgr1" />
+		<property name="destination" ref="ds2AdminBatchQueue" />
+		<property name="messageListener" ref="ds2AdminEventReceiver" />
+	</bean>
+	
+	<bean id="ds2AdminEventReceiver" class="com.spring.jms.DSAdminEventReceiver"/>  
+	<bean id="amgExportToolHelper" class="com.openlane.ds2admin.util.AmgExportToolHelper"/>  
+	 -->
+		
+</beans>
+
+
+
+
+

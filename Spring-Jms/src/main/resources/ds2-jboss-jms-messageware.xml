@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jee="http://www.springframework.org/schema/jee"
+    xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd">
+
+	<!-- 
+    <jee:jndi-lookup id="connectionFactory" jndi-name="java:/mq/mqqueueconnectionfactory" />	
+     -->
+     
+    <bean id="remoteBrokerJndiTemplateQmgr1" class="org.springframework.jndi.JndiTemplate" lazy-init="true"> 
+        	<property name="environment">
+	            <props> 
+	            <prop key="java.naming.provider.url">file:///jboss-eap-6.4/modules/com/karauctionservices/itss/paas/mq/bindings/main/qmgr1</prop>
+	            <prop key="java.naming.factory.initial">com.sun.jndi.fscontext.RefFSContextFactory</prop> 
+	            </props> 
+        	</property>
+    </bean>
+
+    <bean id="remoteBrokerJndiTemplateQmgr2" class="org.springframework.jndi.JndiTemplate" lazy-init="true"> 
+        	<property name="environment">
+	            <props> 
+	            <prop key="java.naming.provider.url">file:///jboss-eap-6.4/modules/com/karauctionservices/itss/paas/mq/bindings/main/qmgr2</prop>
+	            <prop key="java.naming.factory.initial">com.sun.jndi.fscontext.RefFSContextFactory</prop> 
+	            </props> 
+        	</property>
+    </bean>    
+    
+    
+    <bean id="remoteBrokerConnectionFactoryQmgr1" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiTemplate" ref="remoteBrokerJndiTemplateQmgr1"/>
+        <property name="jndiName" value="IHUBQCF" />
+        <property name="lookupOnStartup" value="true" />
+        <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
+    </bean>
+    
+   <bean id="remoteBrokerConnectionFactoryQmgr2" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiTemplate" ref="remoteBrokerJndiTemplateQmgr2"/>
+        <property name="jndiName" value="IHUBQCF" />
+        <property name="lookupOnStartup" value="true" />
+        <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
+    </bean>
+    
+    
+    <bean id="jmsQueueTemplateQmgr1" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory"><ref bean="remoteBrokerConnectionFactoryQmgr1"/></property>
+        <property name="destinationResolver"><ref bean="brokerdestinationResolver"/></property>
+    </bean>
+    
+    <bean id="jmsQueueTemplateQmgr2" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory"><ref bean="remoteBrokerConnectionFactoryQmgr2"/></property>
+        <property name="destinationResolver"><ref bean="brokerdestinationResolver"/></property>
+    </bean>
+   
+	<bean id="brokerdestinationResolver" class="org.springframework.jms.support.destination.JndiDestinationResolver" />    
+    
+	
+</beans>
